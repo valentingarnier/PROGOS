@@ -12,5 +12,6 @@ afficher_binaire(00111);
 }
 
 void afficher_binaire(Octet o) {
-	printf("%c \n \n", o);
+	
+	printf("%d\n", o);
 }
