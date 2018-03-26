@@ -330,18 +330,23 @@ int game_update(game_t* game, direction_t direction) {
 }
 
 int game_init_snake(game_t* game, unsigned int orig_x, unsigned int orig_y) {
-	snake_t snake;
+	segment_t* initialSegment = NULL;
+	initialSegment = malloc(sizeof(segment_t));
 
-	game->snake = snake;
-	segment_t initialSegment;
-	initialSegment.length = 1;
-	initialSegment.x = orig_x;
-	initialSegment.y = orig_y;
+	initialSegment->length = 1;
+	initialSegment->x = orig_x;
+	initialSegment->y = orig_y;
 	*cell(game, orig_x, orig_y) = SNAKE;
 
-	*snake.tail = initialSegment;
-	*snake.head = initialSegment;
+	snake_t* mySnake = NULL;
+	mySnake = malloc(sizeof(snake_t));
 
+	mySnake->tail = initialSegment;
+	mySnake->head = initialSegment;
+	game->snake = *mySnake;
+
+	free(initialSegment);
+	free(mySnake);
 	return 0;
 }
 
