@@ -48,6 +48,7 @@ void vector_destruct(vector* v) {
 //AJOUT D'UN ELEMENT
 size_t add_element(vector* vect, type_el element) {
  	if(vect != NULL) {
+ 		if(vect->size )
  	(*vect).content[(*vect).size] = element;
  	++((*vect).size);
 
@@ -74,6 +75,8 @@ type_el read_value(vector* vect, size_t index) {
 		return 0;
 	}
 }
+
+//ENLARGE
 
 
 
