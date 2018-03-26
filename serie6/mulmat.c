@@ -37,6 +37,9 @@ int main(void)
     mPointeur = multiplication(m1Pointeur, m2Pointeur);
     affiche_matrice(*mPointeur);
   }
+  free(m1Pointeur);
+  free(m2Pointeur);
+  free(mPointeur);
   return 0;
 }
  
