@@ -41,7 +41,6 @@ struct segment_t {
 	segment_t* previous;
 };
 
-#define MAX_NUMBER_OF_SEGMENT 10
 typedef struct snake_t snake_t;
 struct snake_t {
 	segment_t* tail;
@@ -61,7 +60,7 @@ struct game_t {
 
 //PROTOTYPES DES FONCTIONS
 
-void snake_info(const snake_t*);
+//void snake_info(const snake_t*);
 void snake_erase_tail(snake_t*);
 void snake_destroy(snake_t*);
 int snake_add_segment(snake_t*, direction_t);
@@ -210,92 +209,98 @@ static map_cell_t const header_data[] = {
  * Here come the function definitions 
  * (to be done by the students)
  ****************************************************************/
-void snake_info(const snake_t* snake) {
+/*void snake_info(const snake_t* snake) {
 	segment_t* current = NULL;
-	current = malloc(sizeof(segment_t));
-	if(snake->tail != NULL) { current = snake->tail; }
+	current = malloc(sizeof(segment_t));	
+	current = snake->tail;
 
-		while (current != snake->head) {
+	while (current != snake->head) {
 		printf("c-x: %d | ", current->x);
 		printf("c-y: %d | ", current->y);
 		printf("length: %d | ", current->length);
-		printf("direction :(%d, %d) | ", current->direction.dx, current->direction.dy);
-		printf("previous : ");
+		printf("direction :(%d, %d) \n ", current->direction.dx, current->direction.dy);
 		current = current->previous;
 	}
 	free(current);
-	current = NULL;
-}
+	current = NULL; 
+} */
 
 void snake_erase_tail(snake_t* snake) {
-	if(snake->tail != NULL) { free(snake->tail); }
-	snake->tail = (snake->tail)->previous;	
+	if(snake->tail != NULL) {
+	 
+	 free(snake->tail);
+	}
+
+	snake->tail = snake->tail->previous;	
 }
 
 void snake_destroy(snake_t* snake) {
 		segment_t* current = NULL;
 		current = malloc(sizeof(segment_t));
-		
-		if(snake->tail != NULL) { current = snake->tail; }
-
+	
+	current = snake->tail;
 		while(current != snake->head) {
 			snake_erase_tail(snake);
 			current = current->previous;
 		}
 	free(current);
 	current = NULL;
+
 }
 
 int snake_add_segment(snake_t* snake, direction_t direction) {
-	int result = 1;
 
 	segment_t* newSegment = NULL;
+
 	newSegment = malloc(sizeof(segment_t));
-	
 	newSegment->direction = direction;
 	
 	if(snake->tail == NULL) {
+		newSegment->x = snake->head->x;
+		newSegment->y = snake->head->y;
 		newSegment->length = 1;
 		snake->tail = newSegment;
-		result = 0;
-	} else {
+	}
+
+	 else {
+	 	printf("In the shit\n");
 		newSegment->length = 0;
 		newSegment->x = direction.dx + snake->head->x;
 		newSegment->y = direction.dy + snake->head->y;
-		result = 0;
-	}
-	snake->head = newSegment;
-	
-	free(newSegment);
-	newSegment = NULL;
 
-	return result;
+		if(snake->tail->x == snake->head->x && snake->tail->y == snake->head->y){
+			snake->tail->x += direction.dx;
+			snake->tail->y += direction.dy;
+		}else{
+			snake->tail->x += snake->tail->direction.dx;
+			snake->tail->y += snake->tail->direction.dy;
+		}
+	}
+
+	snake->head = newSegment;
+	return 0;
 }
 
 int snake_move(snake_t* snake, direction_t direction) {
-	int result = 1;
-
-	if((direction.dx == snake->head->x) && (direction.dy == snake->head->y)) {
+	if((direction.dx == snake->head->direction.dx) && (direction.dy == snake->head->direction.dy)) {
 		snake->head->x += direction.dx;
 		snake->head->y += direction.dy;
-		result = 0;
 	}
-	 else {
-		snake_add_segment(snake, direction);
-		result = 0;
+	else {
+		snake_add_segment(snake, direction); 
 	}
 
-	if(snake->head != snake->tail) {
+	if(snake->head->x != snake->tail->x || snake->head->y != snake->tail->y) {
+		printf("length of head %d , length of tail %d \n", snake->head->length, snake->tail->length);
+
 		++(snake->head->length);
 		--(snake->tail->length);
-		result = 0;
 	}
 
 	if(snake->tail->length == 0) {
 		snake_erase_tail(snake);
-		result = 0;
 	}
-	return result;
+	return 0;
 }
 
 map_cell_t* cell(game_t* game, unsigned int x, unsigned int y) {
@@ -303,50 +308,50 @@ map_cell_t* cell(game_t* game, unsigned int x, unsigned int y) {
 }
 
 int game_update(game_t* game, direction_t direction) {
+
 	int result = 0;
 
-	unsigned int xq = (game->snake.tail->x) - (direction.dx * (game->snake.tail->length  - 1));
-	unsigned int yq = (game->snake.tail->y) - (direction.dy * (game->snake.tail->length  - 1));
+	unsigned int xq = (game->snake.tail->x) - (direction.dx * ((game->snake.tail->length) - 1));
+	unsigned int yq = (game->snake.tail->y) - (direction.dy * ((game->snake.tail->length) - 1));
 
-	int movement = snake_move(&game->snake, direction);
+	snake_move(&game->snake, direction);
 
 	map_cell_t currentHeadCase = *(cell(game, game->snake.head->x, game->snake.head->y));
 
-	if(movement == 0) { //Success du mouvement
-		if(currentHeadCase == WALL || currentHeadCase == SNAKE) {
-			result = 1;
-		}
-		else if(currentHeadCase == FOOD) {
-			++(game->snake.tail->length);
-			result = 0;
-		}
-		else {
-			*(cell(game, xq, yq)) = EMPTY;
-			result = 0;
-		}
+	if(currentHeadCase == WALL || currentHeadCase == SNAKE) {
+		printf("SNAKE OR WALL\n");
+		result = 1;
 	}
-	currentHeadCase = SNAKE;
+	else if(currentHeadCase == FOOD) {
+		printf("FOOD\n");
+		++(game->snake.tail->length);
+	}
+	else {
+		printf("EMPTY\n");
+		*(cell(game, xq, yq)) = EMPTY;
+	}
+	*cell(game, game->snake.head->x, game->snake.head->y) = SNAKE;
 	return result;
 }
 
 int game_init_snake(game_t* game, unsigned int orig_x, unsigned int orig_y) {
-	segment_t* initialSegment = NULL;
-	initialSegment = malloc(sizeof(segment_t));
+	snake_t* theSnake = NULL;
+	theSnake = malloc(sizeof(snake_t));
+	theSnake->tail = NULL;
+	theSnake->head = NULL;
+	theSnake->head = malloc(sizeof(segment_t));
 
-	initialSegment->length = 1;
-	initialSegment->x = orig_x;
-	initialSegment->y = orig_y;
-	*cell(game, orig_x, orig_y) = SNAKE;
+	theSnake->head->x = orig_x;
+	theSnake->head->y = orig_y;
 
-	snake_t* mySnake = NULL;
-	mySnake = malloc(sizeof(snake_t));
+	direction_t direction;
+	direction.dx = 0; 
+	direction.dy = 0;
 
-	mySnake->tail = initialSegment;
-	mySnake->head = initialSegment;
-	game->snake = *mySnake;
+	snake_add_segment(theSnake, direction);
 
-	free(initialSegment);
-	free(mySnake);
+	*cell(game, orig_x, orig_x) = SNAKE;
+	game->snake = *theSnake;
 	return 0;
 }
 
@@ -462,7 +467,7 @@ void game_print(game_t* game)
         printw("\n");
     }
     /* For debugging */
-    snake_info(&game->snake);
+    //snake_info(&game->snake);
 #ifdef USE_CURSES
     refresh();
 #else
@@ -512,7 +517,7 @@ void game_loop(game_t* game)
 #else
     /* Change this array to simulates moves. 
      * An x is a step where no keys are pressed */
-    char const keys[] = "xsxdxxxxxxxxxxxxxxxxwxxdxxwxxdxsxsxsx";
+    char const keys[] = "sdddddddd";
     const char* key = keys;
 #define getkey (*key)
 #endif
@@ -541,7 +546,7 @@ int main(void)
     keypad(stdscr, TRUE);
 #endif
 
-    game = game_init(3,3);
+    game = game_init(5, 5);
     if (game) {
         game_loop(game);
         game_destroy(game);
