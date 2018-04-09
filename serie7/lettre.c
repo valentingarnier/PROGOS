@@ -2,29 +2,31 @@
 #include <stdio.h>
 #include <string.h>
 
-
-typedef enum Genre Genre;
-enum Genre { M, F };
-
-void genereLettre();
+void genereLettre(char, char [], char [], int, int, char [], char[]);
 
 int main(void) {
-	char genre[] = "chère";
-	char destinataire[] = "Mireille";
-	char sujet[] = "votre cours";
-	char politesse[] = "Amicalement";
-	char auteur[] = "John";
+	char genre = 'F';
+	char destinataire[] = "Mireille      ";
+	char sujet[] = "votre cours                ";
+	char politesse[] = "Amicalement            ";
+	char auteur[] = "John                ";
 	int jour = 18;
 	int mois = 12;
 
 	genereLettre(genre, destinataire, sujet, jour, mois, politesse, auteur);
+	
 
-	/*genre[] = "cher";
-	destinataire[] = "John";
-	sujet[] = "votre demande de rendez-vous.";
-	jour[] = 16;
-	politesse[] = "Sincèrement";
-	auteur[] = "Mireille"; */
+	genre = 'M';
+	strcpy(destinataire, "John");
+
+	strcpy(sujet, "votre demande de rendez-vous.");
+	jour = 16;
+	strcpy(politesse, "Sincèrement");
+	
+		
+	printf("%s", destinataire);
+	strcpy(auteur, "Mireille"); 
+
 
 	printf("\n");
 	printf("\n");
@@ -37,8 +39,14 @@ int main(void) {
 	return 0;
 }
 
-void genereLettre(char genre[], char destinataire[], char sujet[], int jour, int mois, char politesse[], char auteur[]) {
-	printf("Bonjour %s %s,\n", genre, destinataire);
+void genereLettre(char genre, char destinataire[], char sujet[], int jour, int mois, char politesse[], char auteur[]) {
+
+	
+	char salut[] = "aaaaaa";	
+	(genre == 'M') ? strcpy(salut, "cher"), salut[5] = '\0' : strcpy(salut, "chère"), salut[6] = '\0';
+
+	
+	printf("Bonjour %s %s,\n", salut, destinataire);
 	fflush(stdout);
 	printf("Je vous écris à propos de %s.\n", sujet);
 	fflush(stdout);
