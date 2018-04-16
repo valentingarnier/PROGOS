@@ -1,0 +1,5 @@
+What size (2, 3, 4, 5)? What strategy ([B]rute force, B[i]tfield, [K]nuth)? Y Y B B
+Please score attempt (positions, colors): R G B B
+Please score attempt (positions, colors): P B G B
+Please score attempt (positions, colors): B O G B
+Please score attempt (positions, colors): Found solution: B O G B
