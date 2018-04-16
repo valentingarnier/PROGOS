@@ -79,7 +79,47 @@ Examen creer_examen(void) {
 void detruire_Examen(Examen exam) {
 	if(exam != NULL) free(exam);
 }
+#define NB_DEMANDES 3
 
+FILE* demander_fichier()
+{
+  FILE* f = NULL;
+  char nom_fichier[FILENAME_MAX+1];
+  size_t taille_lue = 0;
+  unsigned short int nb = 0;
+ 
+  do {
+    ++nb;
+ 
+    /* demande le nom du fichier */
+    do {
+      printf("Nom du fichier à lire : "); fflush(stdout);
+      fgets(nom_fichier, FILENAME_MAX+1, stdin);
+      taille_lue = strlen(nom_fichier);
+      if ((taille_lue >= 1) && (nom_fichier[taille_lue-1] == '\n'))
+        nom_fichier[--taille_lue] = '\0';
+    } while ((taille_lue == 0) && !feof(stdin));
+ 
+    if (nom_fichier[0] == '\0') {
+      return NULL;
+    }
+ 
+    /* essaye d'ouvrir le fichier */
+    f = fopen(nom_fichier, "r");
+ 
+    /* est-ce que ça a marché ? */
+    if (f == NULL) {
+      printf("-> ERREUR, je ne peux pas lire le fichier \"%s\"\n",
+             nom_fichier);
+    } else {
+      printf("-> OK, fichier \"%s\" ouvert pour lecture.",
+             nom_fichier);
+    }
+  } while ((f == NULL) && (nb < NB_DEMANDES));
+ 
+  /* la valeur de retour est le résultat du test entre (): 0 ou 1 */
+  return f;
+}
 int main(void) {
 
 	Examen examen = creer_examen();
